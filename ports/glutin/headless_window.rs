@@ -11,7 +11,7 @@ use servo::compositing::windowing::{AnimationState, WindowEvent};
 use servo::compositing::windowing::{EmbedderCoordinates, WindowMethods};
 use servo::servo_geometry::DeviceIndependentPixel;
 use servo::style_traits::DevicePixel;
-use servo::webrender_api::units::{DeviceIntRect, DeviceIntSize};
+use servo::webrender_api::units::DeviceIntRect;
 use servo_media::player::context as MediaPlayerCtxt;
 use servo::webrender_traits::WebrenderSurfman;
 use std::cell::Cell;
@@ -87,7 +87,11 @@ impl WindowPortsMethods for Window {
     }
 
     fn page_height(&self) -> f32 {
-        let height = self.webrender_surfman.context_surface_info().unwrap_or(None).unwrap_or(0);
+        let height = self.webrender_surfman
+            .context_surface_info()
+            .unwrap_or(None)
+            .map(|info| info.size.height)
+            .unwrap_or(0);
         let dpr = self.servo_hidpi_factor();
         height as f32 * dpr.get()
     }
@@ -115,13 +119,12 @@ impl WindowMethods for Window {
         let size = self.webrender_surfman
             .context_surface_info()
             .unwrap_or(None)
-            .map(|info| Size2D::from_untyped(info.size));
+            .map(|info| Size2D::from_untyped(info.size))
             .unwrap_or(Size2D::new(0, 0));
         let viewport = DeviceIntRect::new(Point2D::zero(), size);
-        let framebuffer = DeviceIntSize::from_untyped(info.size);
         EmbedderCoordinates {
             viewport,
-            framebuffer,
+            framebuffer: size,
             window: (size, Point2D::zero()),
             screen: size,
             screen_avail: size,

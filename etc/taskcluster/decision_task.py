@@ -45,10 +45,12 @@ def tasks(task_for):
             windows_uwp_x64,
             macos_unit,
             magicleap_dev,
-            android_arm32_dev,
-            android_arm32_dev_from_macos,
-            android_arm32_release,
-            android_x86_wpt,
+            # FIXME: Reenable android testing once smup and surfmanup
+            # work with android.
+            # android_arm32_dev,
+            # android_arm32_dev_from_macos,
+            # android_arm32_release,
+            # android_x86_wpt,
             linux_wpt,
             linux_wpt_layout_2020,
             linux_release,
@@ -107,7 +109,9 @@ def tasks(task_for):
         daily_tasks_setup()
         with_rust_nightly()
         linux_nightly()
-        android_nightly()
+        # FIXME: Reenable android testing once smup and surfmanup
+        # work with android.
+        # android_nightly()
         windows_nightly()
         macos_nightly()
         update_wpt()
@@ -122,6 +126,9 @@ def mocked_only():
     android_x86_wpt()
     magicleap_dev()
     magicleap_nightly()
+    # FIXME: Reenable android testing once smup and surfmanup
+    # work with android.
+    android_nightly()
     decisionlib.DockerWorkerTask("Indexed by task definition").find_or_create()
 
 
@@ -611,11 +618,10 @@ def macos_release_build_with_debug_assertions(priority=None):
             "./mach build --release --verbose --with-debug-assertions",
             "./etc/ci/lockfile_changed.sh",
             "tar -czf target.tar.gz" +
-            " target/release/servo" +
-            " target/release/build/osmesa-src-*/output" +
-            " target/release/build/osmesa-src-*/out/src/gallium/targets/osmesa/.libs" +
-            " target/release/build/osmesa-src-*/out/src/mapi/shared-glapi/.libs",
+            " target/release/servo",
         ]))
+        # This is a bit pointless as we're now building a tar archive just for one file
+        # but future builds might include more?
         .with_artifacts("repo/target.tar.gz")
         .find_or_create("build.macos_x64_release_w_assertions." + CONFIG.task_id())
     )
@@ -641,11 +647,11 @@ def linux_release_build_with_debug_assertions(layout_2020):
             ./mach build --release --with-debug-assertions %s -p servo
             ./etc/ci/lockfile_changed.sh
             tar -czf /target.tar.gz \
-                target/release/servo \
-                target/release/build/osmesa-src-*/output \
-                target/release/build/osmesa-src-*/out/lib/gallium
+                target/release/servo
             sccache --show-stats
         """ % build_args)
+        # This is a bit pointless as we're now building a tar archive just for one file
+        # but future builds might include more?
         .with_artifacts("/target.tar.gz")
         .find_or_create("build.linux_x64%s_release_w_assertions.%s" % (
             index_key_suffix,

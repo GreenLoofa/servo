@@ -618,11 +618,10 @@ def macos_release_build_with_debug_assertions(priority=None):
             "./mach build --release --verbose --with-debug-assertions",
             "./etc/ci/lockfile_changed.sh",
             "tar -czf target.tar.gz" +
-            " target/release/servo" +
-            " target/release/build/osmesa-src-*/output" +
-            " target/release/build/osmesa-src-*/out/src/gallium/targets/osmesa/.libs" +
-            " target/release/build/osmesa-src-*/out/src/mapi/shared-glapi/.libs",
+            " target/release/servo",
         ]))
+        # This is a bit pointless as we're now building a tar archive just for one file
+        # but future builds might include more?
         .with_artifacts("repo/target.tar.gz")
         .find_or_create("build.macos_x64_release_w_assertions." + CONFIG.task_id())
     )
@@ -648,11 +647,11 @@ def linux_release_build_with_debug_assertions(layout_2020):
             ./mach build --release --with-debug-assertions %s -p servo
             ./etc/ci/lockfile_changed.sh
             tar -czf /target.tar.gz \
-                target/release/servo \
-                target/release/build/osmesa-src-*/output \
-                target/release/build/osmesa-src-*/out/lib/gallium
+                target/release/servo
             sccache --show-stats
         """ % build_args)
+        # This is a bit pointless as we're now building a tar archive just for one file
+        # but future builds might include more?
         .with_artifacts("/target.tar.gz")
         .find_or_create("build.linux_x64%s_release_w_assertions.%s" % (
             index_key_suffix,

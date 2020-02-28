@@ -45,10 +45,12 @@ def tasks(task_for):
             windows_uwp_x64,
             macos_unit,
             magicleap_dev,
-            android_arm32_dev,
-            android_arm32_dev_from_macos,
-            android_arm32_release,
-            android_x86_wpt,
+            # FIXME: Reenable android testing once smup and surfmanup
+            # work with android.
+            # android_arm32_dev,
+            # android_arm32_dev_from_macos,
+            # android_arm32_release,
+            # android_x86_wpt,
             linux_wpt,
             linux_wpt_layout_2020,
             linux_release,
@@ -107,7 +109,9 @@ def tasks(task_for):
         daily_tasks_setup()
         with_rust_nightly()
         linux_nightly()
-        android_nightly()
+        # FIXME: Reenable android testing once smup and surfmanup
+        # work with android.
+        # android_nightly()
         windows_nightly()
         macos_nightly()
         update_wpt()
@@ -122,6 +126,9 @@ def mocked_only():
     android_x86_wpt()
     magicleap_dev()
     magicleap_nightly()
+    # FIXME: Reenable android testing once smup and surfmanup
+    # work with android.
+    android_nightly()
     decisionlib.DockerWorkerTask("Indexed by task definition").find_or_create()
 
 
